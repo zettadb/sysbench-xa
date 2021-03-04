@@ -1,0 +1,3 @@
+./sysbench --max-time=300 --test=tests/db/oltp.lua  --pgsql-host=192.168.1.2  --pgsql-port=5401 --pgsql-db=postgres --oltp_tables_count=20 --oltp-table-size=4000000 --oltp-read-only=off --init-rng=on --num-threads=200  --max-requests=0 --oltp-dist-type=uniform --pgsql-user='zhaowei' --pgsql-password=''  --oltp_auto_inc=off --db-driver=pgsql --report-interval=3 $1
+
+#./sysbench --max-time=1800 --test=tests/db/parallel_prepare.lua  --pgsql-host=192.168.1.2  --pgsql-port=5401 --pgsql-db=postgres --oltp_tables_count=20 --oltp-table-size=500000 --oltp-read-only=off --init-rng=on     --num-threads=20  --max-requests=0 --oltp-dist-type=uniform --pgsql-user='zhaowei' --pgsql-password='' --oltp_auto_inc=off --db-driver=pgsql --report-interval=1 run
