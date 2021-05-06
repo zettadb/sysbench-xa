@@ -1,14 +1,11 @@
 import argparse
+import math
 import json
 import time
 import re
 import pyecharts.options as opts
 from pyecharts.charts import Line
 
-"""
-Gallery 使用 pyecharts 1.1.0
-参考地址: https://www.echartsjs.com/examples/editor.html?c=line-marker
-"""
 def draw_charts(product_name, case_name, total_secs, qps, latency):
 	
 	secs = range(0, int(total_secs), int(total_secs/100))
@@ -48,12 +45,39 @@ def draw_charts(product_name, case_name, total_secs, qps, latency):
 		.render("sysbench-" + product_name + '-' + case_name + ".html")
 	)
 
+def compute_stddev(vals):
+	cnt = len(vals)
+	devi = 0.0
+	total = 0.0
+	avg = total/cnt
+
+	for i in vals:
+		total = total + float(i)
+
+	for i in vals:
+		diff = float(i) - avg
+		devi = devi + diff*diff
+	return math.sqrt(devi/cnt)
+
+
+def compute_stddev(vals, total):
+	cnt = len(vals)
+	avg = total/(cnt*1.0)
+	devi = 0
+	for i in vals:
+		diff = float(i) - avg
+		devi = devi + diff*diff
+
+	return math.sqrt(devi/cnt)
+
+# get_sbout_stats.py --filepath= --product_name= --total_seconds=300 --sample_pts=30
 if __name__ == '__main__':
 
 	parser = argparse.ArgumentParser(description='get stat data from sysbench output')
 	parser.add_argument('--filepath', help="sysbench result file path")
 	parser.add_argument('--product_name', help="DBMS product tested")
 	parser.add_argument('--total_seconds', help="NO. of seconds test ran")
+	parser.add_argument('--sample_pts', help="NO. of metric points to sample")
 	args = parser.parse_args()
 	product_name = args.product_name
 	total_secs = int(args.total_seconds)
@@ -65,17 +89,21 @@ if __name__ == '__main__':
 	latency_list = []
 	started = False
 
-	secs = range(0, int(total_secs), int(total_secs/100))
+	secs = range(0, int(total_secs), int(total_secs/int(args.sample_pts)))
 	lp = Line(init_opts=opts.InitOpts(width="1600px", height="800px"))
 	lp_latency = Line(init_opts=opts.InitOpts(width="1600px", height="800px"))
 
 	lp.add_xaxis(xaxis_data=secs)
 	lp_latency.add_xaxis(xaxis_data=secs)
 
-
+	total_qps = 0
+	total_latency = 0
 
 	try:
 		for line in f:
+			if line[0] == '#':
+				continue
+
 			stats = re.findall('reads: (\d+\.\d+), writes: (\d+\.\d+), response time: (\d+\.\d+)',line)
 			if len(stats) > 0:
 				if not started:
@@ -83,11 +111,15 @@ if __name__ == '__main__':
 					started = True
 					latency_list.clear()
 					qps_list.clear()
+					total_qps = 0
+					total_latency = 0
 
 				qps = float(stats[0][0]) + float(stats[0][1])
 				ltc = stats[0][2]
 				qps_list.append(qps)
 				latency_list.append(ltc)
+				total_qps = total_qps + float(qps)
+				total_latency = total_latency + float(ltc)
 				print(qps , ',\t', ltc)
 			else:
 				if started:
@@ -121,6 +153,9 @@ if __name__ == '__main__':
 						),
 					)
 					started = False
+					qps_std_dev = compute_stddev(qps_list, total_qps)
+					latency_std_dev = compute_stddev(latency_list, total_latency)
+					print('\n', case_name[:-1], " QPS stddev: ", qps_std_dev, ", latency stddev: ", latency_std_dev)
 				else:
 					xx = line.find(".lua")
 					if xx >= 0:
