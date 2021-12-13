@@ -57,7 +57,7 @@ pad CHAR(60) DEFAULT '' NOT NULL,
       return 1
    end
 
-   db_query(query)
+   db_query_retry(query)
 
    rs = db_query("select max(id) as nrows from sbtest" .. i);
    if (rs) then
@@ -125,8 +125,8 @@ function cleanup()
    set_vars()
 
    for i = 1,oltp_tables_count do
-   print("Dropping table 'sbtest" .. i .. "'...")
-   db_query("DROP TABLE sbtest".. i )
+   print("Dropping table if exists 'sbtest" .. i .. "'...")
+   db_query("DROP TABLE if exists sbtest".. i )
    end
 end
 

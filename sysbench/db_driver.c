@@ -780,7 +780,14 @@ int db_bulk_do_insert(db_conn_t *con, int is_last)
   if (!con->bulk_cnt)
     return 0;
       
-  if (db_query(con, con->bulk_buffer) == NULL)
+  db_result_set_t *res = NULL;
+  for (int i = 0; i < 5; i++) {
+	  res = db_query(con, con->bulk_buffer);
+	  if (res != NULL) {
+		  break;
+	  }
+  }
+  if (res == NULL)
     return 1;
   
 

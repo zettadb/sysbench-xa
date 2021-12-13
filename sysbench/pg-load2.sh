@@ -8,6 +8,6 @@ user="${TESTUSER:-abc}"
 pass="${TESTPASS:-abc}"
 tblcnt="${TESTCOUNT:-20}"
 tblsize="${TESTSIZE:-4000000}"
+action="${TESTACTION:-prepare}"
 
-# 20 tables, 4M records, 200 bytes record size ~ 16GB data size
-./sysbench --max-time=1800 --test=tests/db/parallel_prepare.lua  --pgsql-host=$host  --pgsql-port=$port --pgsql-db=$dbname --oltp_tables_count=$tblcnt --oltp-table-size=$tblsize --oltp-read-only=off --init-rng=on  --num-threads=1  --max-requests=0 --oltp-dist-type=uniform --pgsql-user=$user --pgsql-password="$pass" --oltp_auto_inc=off --db-driver=pgsql --report-interval=3 run
+./sysbench --test=tests/db/oltp.lua  --pgsql-host=$host  --pgsql-port=$port --pgsql-db=$dbname --oltp_tables_count=$tblcnt --oltp-table-size=$tblsize --oltp-read-only=off --init-rng=on  --num-threads=100  --max-requests=0 --oltp-dist-type=uniform --pgsql-user=$user --pgsql-password="$pass" --oltp_auto_inc=off --db-driver=pgsql --report-interval=20 $action
