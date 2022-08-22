@@ -290,9 +290,7 @@ int sb_lua_op_execute_request(sb_request_t *sb_req, int thread_id)
       {
         CALL_ERROR(L, EVENT_FUNC);
         sb_globals.error = 1;
-    //    return 1;
-        return 0;
-        
+        return 1;
       }
     }
     lua_pop(L, 1);
@@ -644,7 +642,8 @@ int sb_lua_db_query_retry(lua_State *L)
     sb_lua_db_connect(L);
 
   query = luaL_checkstring(L, 1);
-  for(int i = 0; i < 5; i++) {
+  int i = 0;
+  for(; i < 5; i++) {
       rs = db_query(ctxt->con, query);
       if (rs != NULL) {
 	      break;

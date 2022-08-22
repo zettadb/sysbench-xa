@@ -17,24 +17,24 @@ sb-*.txt
 *.pch
 
 # Libraries
-#*.lib
-#*.a
-#*.la
-#*.lo
-#
+*.lib
+*.a
+*.la
+*.lo
+
 ## Shared objects (inc. Windows DLLs)
-#*.dll
-#*.so
-#*.so.*
-#*.dylib
-#
+*.dll
+*.so
+*.so.*
+*.dylib
+
 ## Executables
-#*.exe
-#*.out
-#*.app
-#*.i*86
-#*.x86_64
-#*.hex
+*.exe
+*.out
+*.app
+*.i*86
+*.x86_64
+*.hex
 
 # Debug files
 *.dSYM/
@@ -50,3 +50,9 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+*.Po
+sysbench/CsdbBuild.sh
+sysbench/GPATH
+sysbench/GRTAGS
+sysbench/GTAGS
+

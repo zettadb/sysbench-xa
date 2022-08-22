@@ -477,8 +477,10 @@ static int pgsql_check_status(PGconn *pgcon, PGresult *pgres,
   {
     const char * const errmsg = PQerrorMessage(pgcon);
 
-    if (strstr(errmsg, "deadlock detected") ||
-        strstr(errmsg, "duplicate key value violates unique constraint"))
+    if (strcasestr(errmsg, "deadlock detected") ||
+        strcasestr(errmsg, "Lock wait timeout") ||
+        strcasestr(errmsg, "deadlock") ||
+        strcasestr(errmsg, "duplicate key value violates unique constraint"))
     {
       PQexec(pgcon, "ROLLBACK");
       return SB_DB_ERROR_RESTART_TRANSACTION;

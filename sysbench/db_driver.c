@@ -781,7 +781,8 @@ int db_bulk_do_insert(db_conn_t *con, int is_last)
     return 0;
       
   db_result_set_t *res = NULL;
-  for (int i = 0; i < 5; i++) {
+  int i = 0;
+  for (; i < 5; i++) {
 	  res = db_query(con, con->bulk_buffer);
 	  if (res != NULL) {
 		  break;

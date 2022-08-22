@@ -239,7 +239,7 @@
 /* #undef USE_ORACLE */
 
 /* Define to 1 if you want to compile with PostgreSQL support */
-#define USE_PGSQL 1
+/* #undef USE_PGSQL */
 
 /* Enable extensions on AIX 3, Interix.  */
 #ifndef _ALL_SOURCE
